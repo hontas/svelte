@@ -1,6 +1,6 @@
 import { add_render_callback, flush, schedule_update, dirty_components } from './scheduler';
 import { current_component, set_current_component } from './lifecycle';
-import { blank_object, is_function, run, run_all, noop } from './utils';
+import { blank_object, is_function, is_custom_element, run, run_all, noop } from './utils';
 import { children } from './dom';
 import { transition_in } from './transitions';
 
@@ -101,6 +101,7 @@ export function init(component, options, instance, create_fragment, not_equal, p
 	set_current_component(component);
 
 	const prop_values = options.props || {};
+	const instance_this = is_custom_element(component) ? component : null;
 
 	const $$: T$$ = component.$$ = {
 		fragment: null,
@@ -127,7 +128,7 @@ export function init(component, options, instance, create_fragment, not_equal, p
 	let ready = false;
 
 	$$.ctx = instance
-		? instance.call(component, component, prop_values, (i, ret, ...rest) => {
+		? instance.call(instance_this, component, prop_values, (i, ret, ...rest) => {
 			const value = rest.length ? rest[0] : ret;
 			if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
 				if ($$.bound[i]) $$.bound[i](value);

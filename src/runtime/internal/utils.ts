@@ -12,6 +12,10 @@ export function is_promise<T = any>(value: any): value is PromiseLike<T> {
 	return value && typeof value === 'object' && typeof value.then === 'function';
 }
 
+export function is_custom_element(component) {
+	return component.shadowRoot !== null;
+}
+
 export function add_location(element, file, line, column, char) {
 	element.__svelte_meta = {
 		loc: { file, line, column, char }
